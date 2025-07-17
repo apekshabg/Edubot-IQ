@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduBot IQ - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles to fix layout */
+        .auth-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .auth-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 30px;
+            background: white;
+        }
+
+        .auth-image {
+            flex: 1;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .auth-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            color: white;
+            max-width: 500px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #4a6fa5;
+        }
+
+        .tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #6e8efb;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Welcome to <span>EduBot IQ</span></h1>
+                <p>Sign in to access your personalized learning dashboard</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="tab active" data-tab="login">Login</button>
+                <button class="tab" data-tab="register">Register</button>
+            </div>
+
+            <form id="login-form">
+                <div class="auth-form" id="login-form-content" style="display: block;">
+                    <div class="input-group">
+                        <label for="login-username"><i class="fas fa-user"></i> Username</label>
+                        <input type="text" id="login-username" placeholder="Enter your username" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="login-password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label>
+                            <input type="checkbox"> Remember me
+                        </label>
+                        <a href="#">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="auth-btn">Login</button>
+
+                    <div class="social-login">
+                        <p>Or login with</p>
+                        <div class="social-icons">
+                            <button type="button" class="social-btn google"><i class="fab fa-google"></i></button>
+                            <button type="button" class="social-btn microsoft"><i class="fab fa-microsoft"></i></button>
+                            <button type="button" class="social-btn github"><i class="fab fa-github"></i></button>
+                        </div>
+                    </div>
+
+                    <p id="login-message" class="message"></p>
+                </div>
+            </form>
+
+            <form id="register-form" style="display: none;">
+                <div class="auth-form" id="register-form-content">
+                    <div class="input-group">
+                        <label for="new-username"><i class="fas fa-user"></i> Username</label>
+                        <input type="text" id="new-username" placeholder="Choose a username" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="new-email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="new-email" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="new-password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="new-password" placeholder="Create a password" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password</label>
+                        <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                    </div>
+
+                    <div class="role-selection">
+                        <p>I am a:</p>
+                        <div>
+                            <input type="radio" id="student" name="role" value="student" checked>
+                            <label for="student">Student</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="teacher" name="role" value="teacher">
+                            <label for="teacher">Teacher</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-btn">Create Account</button>
+
+                    <p id="register-message" class="message"></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="auth-image">
+            <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Students learning">
+            <div class="image-overlay">
+                <h2>Join Our Learning Community</h2>
+                <p>Access AI-powered educational tools and resources</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth functionality
+        function initAuthPage() {
+            // Add event listeners to tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    if (tabName === 'login') {
+                        showLoginForm();
+                    } else {
+                        showRegisterForm();
+                    }
+                });
+            });
+
+            // Add form submit handlers
+            document.getElementById('login-form').addEventListener('submit', login);
+            document.getElementById('register-form').addEventListener('submit', register);
+        }
+
+        function showLoginForm() {
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+
+            // Update tab styles
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('.tab[data-tab="login"]').classList.add('active');
+        }
+
+        function showRegisterForm() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+
+            // Update tab styles
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('.tab[data-tab="register"]').classList.add('active');
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            const messageEl = document.getElementById('login-message');
+
+            // Clear previous messages
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+
+            if (!username || !password) {
+                messageEl.textContent = 'Please enter both username and password';
+                messageEl.classList.add('error');
+                return;
+            }
+
+            // Save user to localStorage
+            const user = {
+                username: username,
+                role: username === 'admin' ? 'admin' : (username === 'teacher' ? 'teacher' : 'student')
+            };
+
+            localStorage.setItem('edubot_user', JSON.stringify(user));
+
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        }
+
+        function register(event) {
+            event.preventDefault();
+            const username = document.getElementById('new-username').value.trim();
+            const email = document.getElementById('new-email').value.trim();
+            const password = document.getElementById('new-password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const messageEl = document.getElementById('register-message');
+
+            // Clear previous messages
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+
+            // Validation
+            if (!username || !email || !password || !confirmPassword) {
+                messageEl.textContent = 'Please fill all fields';
+                messageEl.classList.add('error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                messageEl.textContent = 'Passwords do not match';
+                messageEl.classList.add('error');
+                return;
+            }
+
+            if (password.length < 6) {
+                messageEl.textContent = 'Password must be at least 6 characters';
+                messageEl.classList.add('error');
+                return;
+            }
+
+            // Save user to localStorage
+            const user = {
+                username: username,
+                email: email,
+                role: role
+            };
+
+            localStorage.setItem('edubot_user', JSON.stringify(user));
+
+            // Show success message
+            messageEl.textContent = 'Registration successful! Redirecting...';
+            messageEl.classList.add('success');
+
+            // Redirect to dashboard after a delay
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+
+        // Initialize auth page
+        document.addEventListener('DOMContentLoaded', initAuthPage);
+    </script>
+</body>
+</html>

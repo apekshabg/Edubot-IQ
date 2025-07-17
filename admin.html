@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduBot IQ - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4ade80;
+            --warning: #facc15;
+            --danger: #f87171;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-600: #6c757d;
+            --gray-800: #343a40;
+            --sidebar-width: 280px;
+            --header-height: 80px;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .admin-dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .admin-info span {
+            font-size: 16px;
+            font-weight: 600;
+            display: block;
+        }
+
+        .admin-info small {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-nav li {
+            margin: 5px 0;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 3px solid var(--accent);
+        }
+
+        .sidebar-nav i {
+            width: 30px;
+            font-size: 18px;
+            margin-right: 12px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 20px;
+        }
+
+        .sidebar-footer button {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar-footer button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        /* Main Content Styles */
+        .admin-main-content {
+            flex: 1;
+            padding: 30px;
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 25px 0;
+            margin-bottom: 20px;
+        }
+
+        .admin-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .admin-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .admin-actions button {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: var(--gray-600);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s;
+        }
+
+        .admin-actions button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .dashboard-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .dashboard-right {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Stats Cards */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+            text-align: right;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: var(--success);
+            font-weight: 500;
+            background: rgba(74, 222, 128, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            text-align: right;
+            float: right;
+        }
+
+        /* Charts Section */
+        .admin-charts {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-filter select {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-300);
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .chart {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Tables Section */
+        .admin-tables {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .recent-activity {
+            padding: 15px 0;
+        }
+
+        .activity-item {
+            display: flex;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--gray-200);
+            transition: background 0.2s;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: var(--gray-100);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .activity-details h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .activity-details p {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-bottom: 5px;
+        }
+
+        .activity-details small {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .performance-table th,
+        .performance-table td {
+            padding: 16px 25px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .performance-table th {
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 4px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .dashboard-right {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-right .admin-stats {
+                flex: 1;
+                min-width: 300px;
+            }
+
+            .dashboard-right .admin-tables {
+                flex: 1;
+                min-width: 300px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+
+            .admin-sidebar .logo span,
+            .admin-sidebar .admin-info,
+            .sidebar-nav a span,
+            .sidebar-footer button span {
+                display: none;
+            }
+
+            .admin-sidebar .logo {
+                font-size: 24px;
+                padding: 10px 0;
+            }
+
+            .admin-sidebar .admin-profile {
+                justify-content: center;
+                padding: 10px;
+            }
+
+            .admin-sidebar .avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .admin-main-content {
+                margin-left: 80px;
+            }
+
+            .sidebar-nav a {
+                justify-content: center;
+                padding: 15px 0;
+            }
+
+            .sidebar-nav i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-main-content {
+                padding: 15px;
+            }
+
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header h1 {
+                font-size: 22px;
+            }
+
+            .dashboard-right {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-dashboard">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo">EduBot<span>IQ</span></div>
+                <div class="admin-profile">
+                    <div class="avatar admin">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="admin-info">
+                        <span id="admin-name">Admin</span>
+                        <small>Administrator</small>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-users"></i> <span>Students</span></a></li>
+                    <li><a href="#"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span></a></li>
+                    <li><a href="#"><i class="fas fa-book"></i> <span>Courses</span></a></li>
+                    <li><a href="#"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main-content">
+            <div class="admin-header">
+                <h1>Admin Dashboard</h1>
+                <div class="admin-actions">
+                    <button><i class="fas fa-bell"></i></button>
+                    <button><i class="fas fa-cog"></i></button>
+                </div>
+            </div>
+
+            <div class="dashboard-container">
+                <div class="dashboard-left">
+                    <!-- Charts Section -->
+                    <div class="admin-charts">
+                        <div class="chart-header">
+                            <h3>User Growth</h3>
+                            <div class="chart-filter">
+                                <select>
+                                    <option>Last 7 days</option>
+                                    <option selected>Last 30 days</option>
+                                    <option>Last 90 days</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="admin-charts">
+                        <div class="chart-header">
+                            <h3>Course Popularity</h3>
+                        </div>
+                        <div class="chart">
+                            <canvas id="coursePopularityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-right">
+                    <!-- Stats Cards on the right -->
+                    <div class="admin-stats">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Total Users</div>
+                                <div class="stat-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361ee;">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">254</div>
+                            <div class="stat-change">+12% from last month</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Active Courses</div>
+                                <div class="stat-icon" style="background: rgba(247, 37, 133, 0.1); color: #f72585;">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">36</div>
+                            <div class="stat-change">+3 new courses</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">AI Queries</div>
+                                <div class="stat-icon" style="background: rgba(76, 201, 240, 0.1); color: #4cc9f0;">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">2,148</div>
+                            <div class="stat-change">Today: 187</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Avg. Performance</div>
+                                <div class="stat-icon" style="background: rgba(250, 204, 21, 0.1); color: #facc15;">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">81%</div>
+                            <div class="stat-change">+5% improvement</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="admin-tables">
+                        <div class="table-header">
+                            <h3>Recent Activity</h3>
+                        </div>
+                        <div class="recent-activity">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h4>New student registered</h4>
+                                    <p>John Doe joined the platform</p>
+                                    <small>10 minutes ago</small>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h4>New course created</h4>
+                                    <p>"Advanced Machine Learning" added</p>
+                                    <small>2 hours ago</small>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h4>AI model updated</h4>
+                                    <p>New knowledge base deployed</p>
+                                    <small>5 hours ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Performing Students -->
+            <div class="admin-tables" style="margin-top: 30px;">
+                <div class="table-header">
+                    <h3>Top Performing Students</h3>
+                </div>
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Avg. Score</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Emily Johnson</td>
+                            <td>Mathematics</td>
+                            <td>95%</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 95%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Michael Chen</td>
+                            <td>Computer Science</td>
+                            <td>92%</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Williams</td>
+                            <td>Physics</td>
+                            <td>90%</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>David Brown</td>
+                            <td>Chemistry</td>
+                            <td>88%</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 88%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logout function
+        function logout() {
+            alert('Logging out...');
+            // In a real application, this would redirect to logout page
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // User Growth Chart
+            const userCtx = document.getElementById('userGrowthChart').getContext('2d');
+            const userGrowthChart = new Chart(userCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1 Jul', '5 Jul', '10 Jul', '15 Jul', '20 Jul', '25 Jul', '30 Jul'],
+                    datasets: [{
+                        label: 'New Users',
+                        data: [45, 52, 48, 65, 72, 78, 84],
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Active Users',
+                        data: [120, 135, 125, 145, 160, 170, 185],
+                        borderColor: '#f72585',
+                        backgroundColor: 'rgba(247, 37, 133, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Course Popularity Chart
+            const courseCtx = document.getElementById('coursePopularityChart').getContext('2d');
+            const coursePopularityChart = new Chart(courseCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mathematics', 'Physics', 'Computer Science', 'Chemistry', 'Biology', 'English'],
+                    datasets: [{
+                        label: 'Enrollments',
+                        data: [320, 210, 280, 180, 150, 120],
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(247, 37, 133, 0.7)',
+                            'rgba(76, 201, 240, 0.7)',
+                            'rgba(250, 204, 21, 0.7)',
+                            'rgba(120, 111, 214, 0.7)',
+                            'rgba(56, 189, 248, 0.7)'
+                        ],
+                        borderColor: [
+                            '#4361ee',
+                            '#f72585',
+                            '#4cc9f0',
+                            '#facc15',
+                            '#786fd6',
+                            '#38bdf8'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
